@@ -5,6 +5,115 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>关于 - 运动讲师的领跑者 Ethan</title>
     <!-- 链接到相同的样式文件 -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .nb_body {
+            width: 80%;
+            margin: auto;
+            background: #fff;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            text-align: center;
+            padding: 30px 0;
+        }
+        .title {
+            font-size: 2.5em; /* 大字体 */
+            color: #333;
+        }
+        .nav2 ul {
+            list-style: none;
+            padding: 0;
+            background-color: #ddd;
+            display: flex;
+            justify-content: center;
+        }
+        .nav2 li {
+            padding: 10px 20px;
+        }
+        .nav2 a {
+            text-decoration: none;
+            color: #333;
+        }
+        .nav2 .selected a {
+            color: #fff;
+            background-color: #4CAF50;
+        }
+        .content {
+            display: flex;
+            justify-content: space-between;
+            padding: 20px 0;
+        }
+        .sidebar, .main {
+            flex-basis: 49%;
+            background-color: #e9e9e9;
+            padding: 20px;
+            margin: 5px;
+        }
+        .clearfix::after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+        .footer {
+            text-align: center;
+            padding: 20px 0;
+            background-color: #333;
+            color: #fff;
+        }
+         .carousel {
+                width: 100%;
+                position: relative;
+                height: 300px;
+                overflow: hidden;
+                margin-top: -1em;
+            }
+
+            .carousel-list {
+                width: 100%;
+                height: 100%;
+                position: relative;
+                perspective: 1000px;
+            }
+
+        .carousel-item {
+  width: 400px;
+  height: 100%;
+  position: absolute;
+  user-select: none;
+  transition: 0.4s;
+  left: 30%;
+  top: 0%; /* 添加垂直居中 */
+  margin-left:-100px; /* 水平居中，但是这里可能需要调整 */
+  transform: translate(-50%, -50%); /* 使用transform属性实现居中 */
+}
+
+            .arrow {
+                position: absolute;
+                top: 50%;
+                margin-top: -50px;
+            }
+
+            .arrow img {
+                width: 60px;
+            }
+
+     .prev {
+  left: 0px;
+  
+}
+
+
+            .next {
+                right: 0px;
+            }
+    </style>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -20,7 +129,7 @@
                 <li><a href="contact.html">联系我们</a></li>
             </ul>
         </div>
-          <div class="content">
+       <div class="content">
              <div class="carousel">
             <div class="carousel-list">
                 <img class="carousel-item" src="https://img.picgo.net/2024/08/26/1000013070f21d9a5fada3e56f.md.jpg" alt="" />
@@ -39,7 +148,6 @@
                 <img src="https://img.picgo.net/2024/08/26/10000130784492b29395fc01b9.th.png" alt="" />
             </div>
         </div>
-            </div>
             <div class="main">
                 <h2>关于我们</h2>
                 <!-- 内容区域保持空白 -->
@@ -53,4 +161,72 @@
     <!-- 链接到相同的脚本文件 -->
     <script src="script.js"></script>
 </body>
+   <script>
+        const items = document.querySelectorAll('.carousel-item');
+        // 当前显示的第几张轮播图
+        let index = 3;
+
+        function layout() {
+            // 图片之间的间隔
+            const xOffsetStep = 100;
+            // 两张轮播图之间的递减缩放倍率
+            const scaleStep = 0.6;
+            // 两张轮播图之间的透明度递减倍率
+            const opacityStep = 0.5;
+            for (let i = 0; i < items.length; i++) {
+                const item = items[i];
+                // 计算每张图片i距离当前图片index之间间隔几张
+                const dis = Math.abs(i - index);
+                // 返回1，-1，0，-0，当做一个正负号
+                const sign = Math.sign(i - index);
+
+                let xOffset = (i - index) * xOffsetStep;
+                // 每张图片的初始偏移量，解决初始偏移距离太小的问题
+                if (i !== index) {
+                    // sign为正数，右边的每张图片加上100的偏移量；
+                    // sign为负数，左边的每张图片减去100的偏移量。
+                    xOffset = xOffset + 100 * sign;
+                }
+                // 每张图片缩放倍数
+                const scale = scaleStep ** dis;
+                // 如果是当前的不旋转，否则左边旋转45度，右边旋转-45度
+                const rotateY = i === index ? 0 : 45 * -sign;
+                item.style.transform = `translateX(${xOffset}px) scale(${scale}) rotateY(${rotateY}deg)`;
+                // scale同理，每张图片的透明度，越远透明度越小
+                const opacity = opacityStep ** dis;
+                item.style.opacity = opacity;
+                // 设置每张图片的层级，距离当前index越远的，层级越低
+                const zIndex = items.length - dis;
+                item.style.zIndex = zIndex;
+            }
+        }
+
+        layout();
+
+        const prev = document.querySelector('.prev');
+        const next = document.querySelector('.next');
+
+        prev.addEventListener('click', () => {
+            index--;
+            if (index < 0) {
+                index = 0;
+            }
+            layout();
+        })
+        next.addEventListener('click', () => {
+            index++;
+            if (index > items.length - 1) {
+                index = items.length - 1;
+            }
+            layout();
+        })
+
+        // 点击图片切换
+        items.forEach((item, i) => {
+            item.addEventListener('click', () => {
+                index = i;
+                layout()
+            })
+        })
+    </script>
 </html>
